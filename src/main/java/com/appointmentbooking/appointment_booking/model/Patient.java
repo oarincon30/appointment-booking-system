@@ -1,9 +1,15 @@
 package com.appointmentbooking.appointment_booking.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "patients")
+@Data
+@NoArgsConstructor          // Constructor vacío (necesario para JPA y JSON deserialization)
+@AllArgsConstructor         // Constructor con todos los campos
 public class Patient {
 
     @Id
@@ -15,38 +21,4 @@ public class Patient {
     private String email;
 
     private String phone;
-
-    // Getters and setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 }
