@@ -25,6 +25,14 @@ public class PatientController {
         return ResponseEntity.ok(created);
     }
 
+    // Get patient by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
+        return service.getPatientById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     // Get all patients
     @GetMapping
     public ResponseEntity<List<Patient>> getAllPatients() {
@@ -34,12 +42,9 @@ public class PatientController {
     // Update a patient
     @PutMapping("/{id}")
     public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody PatientDTO updatedDto) {
-        Patient updated = service.updatePatient(id, updatedDto);
-        if (updated != null) {
-            return ResponseEntity.ok(updated);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return service.updatePatient(id, updatedDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // Delete a patient

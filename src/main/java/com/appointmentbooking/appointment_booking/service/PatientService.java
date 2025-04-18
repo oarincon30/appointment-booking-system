@@ -11,47 +11,44 @@ import java.util.Optional;
 @Service
 public class PatientService {
 
-    private final PatientRepository patientRepository;
+    private final PatientRepository repository;
 
-    public PatientService(PatientRepository patientRepository) {
-        this.patientRepository = patientRepository;
+    public PatientService(PatientRepository repository) {
+        this.repository = repository;
     }
 
-    // Crear paciente
     public Patient createPatient(PatientDTO dto) {
         Patient patient = new Patient();
         patient.setFullName(dto.getFullName());
         patient.setEmail(dto.getEmail());
         patient.setPhone(dto.getPhone());
-        return patientRepository.save(patient);
+        return repository.save(patient);
     }
 
-    // Obtener todos los pacientes
     public List<Patient> getAllPatients() {
-        return patientRepository.findAll();
+        return repository.findAll();
     }
 
-    // Actualizar paciente
-    public Patient updatePatient(Long id, PatientDTO dto) {
-        Optional<Patient> optionalPatient = patientRepository.findById(id);
-
-        if (optionalPatient.isPresent()) {
-            Patient patient = optionalPatient.get();
-            patient.setFullName(dto.getFullName());
-            patient.setEmail(dto.getEmail());
-            patient.setPhone(dto.getPhone());
-            return patientRepository.save(patient);
-        }
-
-        return null;
+    public Optional<Patient> getPatientById(Long id) {
+        return repository.findById(id);
     }
 
-    // Eliminar paciente
+    public Optional<Patient> updatePatient(Long id, PatientDTO dto) {
+        return repository.findById(id)
+                .map(patient -> {
+                    patient.setFullName(dto.getFullName());
+                    patient.setEmail(dto.getEmail());
+                    patient.setPhone(dto.getPhone());
+                    return repository.save(patient);
+                });
+    }
+
     public boolean deletePatient(Long id) {
-        if (patientRepository.existsById(id)) {
-            patientRepository.deleteById(id);
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 }
