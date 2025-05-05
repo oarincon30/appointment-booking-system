@@ -5,6 +5,7 @@ import com.appointmentbooking.appointment_booking.model.Patient;
 import com.appointmentbooking.appointment_booking.service.PatientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class PatientController {
 
     // Create a patient
     @PostMapping
-    public ResponseEntity<Patient> createPatient(@RequestBody PatientDTO dto) {
+    public ResponseEntity<Patient> createPatient(@Valid @RequestBody PatientDTO dto) {
         Patient created = service.createPatient(dto);
         return ResponseEntity.ok(created);
     }
@@ -28,9 +29,8 @@ public class PatientController {
     // Get patient by ID
     @GetMapping("/{id}")
     public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
-        return service.getPatientById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Patient patient = service.getPatientById(id);
+        return ResponseEntity.ok(patient);
     }
 
     // Get all patients
@@ -42,19 +42,14 @@ public class PatientController {
     // Update a patient
     @PutMapping("/{id}")
     public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody PatientDTO updatedDto) {
-        return service.updatePatient(id, updatedDto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Patient updated = service.updatePatient(id, updatedDto);
+        return ResponseEntity.ok(updated);
     }
 
     // Delete a patient
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
-        boolean deleted = service.deletePatient(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        service.deletePatient(id);
+        return ResponseEntity.noContent().build();
     }
 }

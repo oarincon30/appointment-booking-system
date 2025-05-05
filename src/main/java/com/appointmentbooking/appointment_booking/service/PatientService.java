@@ -3,6 +3,7 @@ package com.appointmentbooking.appointment_booking.service;
 import com.appointmentbooking.appointment_booking.dto.PatientDTO;
 import com.appointmentbooking.appointment_booking.model.Patient;
 import com.appointmentbooking.appointment_booking.repository.PatientRepository;
+import com.appointmentbooking.appointment_booking.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,21 +30,30 @@ public class PatientService {
         return repository.findAll();
     }
 
-    public Optional<Patient> getPatientById(Long id) {
-        return repository.findById(id);
-    }
-
-    public Optional<Patient> updatePatient(Long id, PatientDTO dto) {
+    public Patient getPatientById(Long id) {
         return repository.findById(id)
-                .map(patient -> {
-                    patient.setFullName(dto.getFullName());
-                    patient.setEmail(dto.getEmail());
-                    patient.setPhone(dto.getPhone());
-                    return repository.save(patient);
-                });
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
     }
 
-    public boolean deletePatient(Long id) {
+    public Patient updatePatient(Long id, PatientDTO dto) {
+        Patient patient = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot update. Patient not found with ID: " + id));
+
+        patient.setFullName(dto.getFullName());
+        patient.setEmail(dto.getEmail());
+        patient.setPhone(dto.getPhone());
+        return repository.save(patient);
+    }
+
+    public void deletePatient(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Cannot delete. Patient not found with ID: " + id);
+        }
+        repository.deleteById(id);
+    }
+
+/* obsolete
+  public boolean deletePatient(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
             return true;
@@ -51,4 +61,6 @@ public class PatientService {
             return false;
         }
     }
+ */
+
 }
