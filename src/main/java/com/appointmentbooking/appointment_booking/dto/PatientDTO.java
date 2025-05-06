@@ -3,6 +3,7 @@ package com.appointmentbooking.appointment_booking.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 public class PatientDTO {
 
@@ -14,8 +15,7 @@ public class PatientDTO {
     @Email(message = "Invalid email format")
     private String email;
 
-    @NotBlank(message = "Phone is required")
-    @Size(min = 7, max = 15, message = "Phone number must be between 7 and 15 digits")
+    @Pattern(regexp = "\\d{10}", message = "Phone must be 10 digits")
     private String phone;
 
     public PatientDTO() {}
