@@ -52,15 +52,5 @@ public class PatientService {
         repository.deleteById(id);
     }
 
-/* obsolete
-  public boolean deletePatient(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-            return true;
-        } else {
-            return false;
-        }
-    }
- */
 
 }
