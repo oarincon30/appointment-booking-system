@@ -14,17 +14,17 @@ public class AppointmentBookingApplication {
 		SpringApplication.run(AppointmentBookingApplication.class, args);
 	}
 
-	@Bean
-	CommandLineRunner runner(PatientRepository patientRepository) {
-		return args -> {
-			Patient patient = new Patient();
-			patient.setFullName("John Doe");
-			patient.setEmail("john@example.com");
-			patient.setPhone("1234567890");
-
-			patientRepository.save(patient);
-
-			System.out.println("✔️ Patient saved to DB!");
-		};
-	}
+//	@Bean
+//	CommandLineRunner runner(PatientRepository patientRepository) {
+//		return args -> {
+//			Patient patient = new Patient();
+//			patient.setFullName("John Doe");
+//			patient.setEmail("john@example.com");
+//			patient.setPhone("1234567890");
+//
+//			patientRepository.save(patient);
+//
+//			System.out.println("✔️ Patient saved to DB!");
+//		};
+//	}
 }
