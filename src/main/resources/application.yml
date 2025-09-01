@@ -1,9 +1,9 @@
 # src/main/resources/application.yml
 spring:
   datasource:
-    url: jdbc:postgresql://<tu-servidor>.postgres.database.azure.com:5432/dental_dev?sslmode=require
-    username: <dental_user>
-    password: ${DB_PASSWORD}          # define DB_PASSWORD en tu entorno local
+    url: jdbc:postgresql://localhost:5432/appointment_booking
+    username: 'postgres'
+    password: '09po'          # define DB_PASSWORD en tu entorno local
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10

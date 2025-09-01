@@ -1,15 +1,19 @@
 package com.appointmentbooking.appointment_booking.service.impl;
 
-import com.appointmentbooking.appointment_booking.domain.*;
-import com.appointmentbooking.appointment_booking.repository.*;
-import com.appointmentbooking.appointment_booking.service.AppointmentService;
+import com.appointmentbooking.appointment_booking.domain.Appointment;
+import com.appointmentbooking.appointment_booking.domain.AppointmentStatus;
+import com.appointmentbooking.appointment_booking.domain.Dentist;
 import com.appointmentbooking.appointment_booking.dto.AppointmentCreateDTO;
 import com.appointmentbooking.appointment_booking.dto.AppointmentDTO;
-import com.appointmentbooking.appointment_booking.exception.GlobalExceptionHandler; // For reference
 import com.appointmentbooking.appointment_booking.exception.ResourceNotFoundException;
+import com.appointmentbooking.appointment_booking.repository.AppointmentRepository;
+import com.appointmentbooking.appointment_booking.repository.DentistRepository;
+import com.appointmentbooking.appointment_booking.repository.PatientRepository;
+import com.appointmentbooking.appointment_booking.service.AppointmentService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
