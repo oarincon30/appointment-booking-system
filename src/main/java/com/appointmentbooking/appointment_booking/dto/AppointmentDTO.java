@@ -1,52 +1,17 @@
 package com.appointmentbooking.appointment_booking.dto;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.appointmentbooking.appointment_booking.domain.AppointmentStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
-public class AppointmentDTO {
-
-    @NotNull(message = "Date and time are required")
-    @Future(message = "The appointment must be in the future")
-    private LocalDateTime dateTime;
-
-    @NotBlank(message = "Reason is required")
-    private String reason;
-
-    @NotNull(message = "Patient ID is required")
-    private Long patientId;
-
-    public AppointmentDTO() {}
-
-    public AppointmentDTO(LocalDateTime dateTime, String reason, Long patientId) {
-        this.dateTime = dateTime;
-        this.reason = reason;
-        this.patientId = patientId;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public Long getPatientId() {
-        return patientId;
-    }
-
-    public void setPatientId(Long patientId) {
-        this.patientId = patientId;
-    }
-}
+@Schema(description = "Appointment read model")
+public record AppointmentDTO(
+        @Schema(example = "42") Long id,
+        @Schema(example = "1") Long patientId,
+        @Schema(example = "1") Long dentistId,
+        @Schema(example = "2025-09-01T14:00:00Z") OffsetDateTime startAt,
+        @Schema(example = "2025-09-01T14:30:00Z") OffsetDateTime endAt,
+        @Schema(implementation = AppointmentStatus.class, example = "SCHEDULED") AppointmentStatus status,
+        @Schema(example = "Routine checkup and cleaning") String reason
+) {}
