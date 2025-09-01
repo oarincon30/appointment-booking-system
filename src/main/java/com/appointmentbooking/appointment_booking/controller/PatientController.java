@@ -1,11 +1,9 @@
 package com.appointmentbooking.appointment_booking.controller;
 
-
 import com.appointmentbooking.appointment_booking.service.PatientService;
 import com.appointmentbooking.appointment_booking.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.*;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -25,18 +23,12 @@ public class PatientController {
 
     private final PatientService service;
 
-    @Operation(summary = "Create a patient")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Created",
-                    content = @Content(schema = @Schema(implementation = PatientDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Validation error")
-    })
-    @PostMapping
-    public ResponseEntity<PatientDTO> create(
-            @Valid
-            @RequestBody(
+    @Operation(
+            summary = "Create a patient",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
-                    content = @Content(mediaType = "application/json",
+                    content = @Content(
+                            mediaType = "application/json",
                             schema = @Schema(implementation = PatientCreateDTO.class),
                             examples = @ExampleObject("""
                 {
@@ -46,7 +38,16 @@ public class PatientController {
                 }
               """)
                     )
-            ) PatientCreateDTO dto) {
+            )
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Created",
+                    content = @Content(schema = @Schema(implementation = PatientDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Validation error")
+    })
+    @PostMapping
+    public ResponseEntity<PatientDTO> create(
+            @Valid @org.springframework.web.bind.annotation.RequestBody PatientCreateDTO dto) {
 
         var created = service.create(dto);
         var location = ServletUriComponentsBuilder.fromCurrentRequest()
