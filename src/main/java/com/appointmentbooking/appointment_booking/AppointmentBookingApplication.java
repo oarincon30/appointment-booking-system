@@ -1,6 +1,6 @@
 package com.appointmentbooking.appointment_booking;
 
-import com.appointmentbooking.appointment_booking.model.Patient;
+//import com.appointmentbooking.appointment_booking.model.Patient;
 import com.appointmentbooking.appointment_booking.repository.PatientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -27,4 +27,5 @@ public class AppointmentBookingApplication {
 //			System.out.println("✔️ Patient saved to DB!");
 //		};
 //	}
+
 }

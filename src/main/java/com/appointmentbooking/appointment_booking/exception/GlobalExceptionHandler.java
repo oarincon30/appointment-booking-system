@@ -1,47 +1,67 @@
 package com.appointmentbooking.appointment_booking.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.appointmentbooking.appointment_booking.service.impl.AppointmentServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.*;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Global handler for exceptions thrown in the application.
- */
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex) {
-        Map<String, Object> errorDetails = new HashMap<>();
-        errorDetails.put("timestamp", LocalDateTime.now());
-        errorDetails.put("status", HttpStatus.NOT_FOUND.value());
-        errorDetails.put("error", "Resource Not Found");
-        errorDetails.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> fieldErrors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                fieldErrors.put(error.getField(), error.getDefaultMessage())
-        );
-
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("timestamp", LocalDateTime.now());
-        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-        errorResponse.put("error", "Validation Error");
-        errorResponse.put("messages", fieldErrors);
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException ex) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        pd.setTitle("Validation failed");
+        pd.setType(URI.create("https://example.org/problems/validation-error"));
+        Map<String, String> errors = new LinkedHashMap<>();
+        for (var error : ex.getBindingResult().getAllErrors()) {
+            String field = error instanceof FieldError fe ? fe.getField() : error.getObjectName();
+            errors.put(field, error.getDefaultMessage());
+        }
+        pd.setProperty("errors", errors);
+        return ResponseEntity.of(pd).build();
     }
 
-    // Add other exception handlers here if needed
+    @ExceptionHandler({ResourceNotFoundException.class, EntityNotFoundException.class})
+    public ResponseEntity<ProblemDetail> handleNotFound(RuntimeException ex) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        pd.setTitle("Resource not found");
+        pd.setDetail(ex.getMessage());
+        pd.setType(URI.create("https://example.org/problems/not-found"));
+        return ResponseEntity.of(pd).build();
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ProblemDetail> handleDataIntegrity(DataIntegrityViolationException ex) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        pd.setTitle("Data integrity violation");
+        pd.setDetail("A unique or foreign key constraint was violated");
+        pd.setType(URI.create("https://example.org/problems/data-integrity"));
+        return ResponseEntity.of(pd).build();
+    }
+
+    @ExceptionHandler(AppointmentServiceImpl.OverlapException.class)
+    public ResponseEntity<ProblemDetail> handleOverlap(AppointmentServiceImpl.OverlapException ex) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        pd.setTitle("Appointment overlap");
+        pd.setDetail(ex.getMessage());
+        pd.setType(URI.create("https://example.org/problems/appointment-overlap"));
+        return ResponseEntity.of(pd).build();
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ProblemDetail> handleIllegalArgument(IllegalArgumentException ex) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        pd.setTitle("Invalid argument");
+        pd.setDetail(ex.getMessage());
+        pd.setType(URI.create("https://example.org/problems/invalid-argument"));
+        return ResponseEntity.of(pd).build();
+    }
 }
